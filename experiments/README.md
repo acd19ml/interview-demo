@@ -11,8 +11,9 @@
 
 1. **v0.1 走骨架**：`exp-001-dense-only` —— 纯 dense + 固定 chunk，跑 golden set。
 2. 看哪条 query fail，沿**诊断链**定位失败段（下表）。
-3. **只拉定位到那段的杠杆**，重跑，记一行 `results/leaderboard.md` + 一句决策。
-4. golden set 全绿即停（YAGNI 停止规则）。
+3. 若 Recall 全绿但某类 query 很脆，先扩同类 golden query，确认问题不是单题偶然。
+4. **只拉定位到那段的杠杆**，重跑，记一行 `results/leaderboard.md` + 一句决策。
+5. 扩展后的 golden set 全绿即停（YAGNI 停止规则）。
 
 ```bash
 python experiments/eval.py --config experiments/configs/exp-001-dense-only.yaml
@@ -37,18 +38,21 @@ python experiments/eval.py --config experiments/configs/exp-000-baseline-longcon
 ```
 experiments/
   golden/
-    queries.jsonl        # golden set（3 条核心 + 后续扩充）
+    queries.jsonl        # golden set（3 条核心 + semantic stress set）
     corpus/              # 被检索的文档（doc_id = 文件名）
       chun.txt           #   《春》
       guxiang.txt        #   《故乡》
       distractors/       #   风格相近的散文，把检索做难（见 design.md 选择一·代价）
   configs/               # 每个实验 = 一个 yaml（Strategy 组装 / DI）
   results/
-    leaderboard.md       # 实验排行榜，每条改动一行
-  eval.py                # 评测 harness（当前为签名骨架，v0.1 填实现）
+    leaderboard.md       # 数字一览，每个实验一行（"改动""决策"两列人填）
+    <exp_id>.json        # 每次跑的机器真值 + 指纹（code/corpus/golden/model/config）
+  journal.md             # 实验日志：观察→诊断→决策→下一步假设（学习闭环）
+  eval.py                # 评测 harness（直接打 core 库，产出 json + leaderboard 行）
 ```
 
 ## 评测约定
 
-- **gold 标注粒度**：`queries.jsonl` 现在标到 `gold_doc`（文档级）。`gold_chunk_ids` 留空，**待 v0.1 chunker 确定后回填**（chunk id 依赖切分策略，先有 chunker 才能标 chunk gold）。在回填前，`eval.py` 以文档级 recall 兜底。
-- **指标**：Recall@1 / Recall@3 / MRR。
+- **gold 粒度 = 文档级**：判分只问"top 结果是否来自 `gold_doc`"（客观）。**不做 chunk 级 gold**（哪段算对无客观标准、人工重，见 design.md 选择四）；`queries.jsonl` 的 `gold_chunk_ids` 保留字段但不使用。
+- **指标**：Recall@1 / Recall@3 / MRR / **margin**（最佳 gold 分 − 最佳非 gold 分；Recall 饱和时的脆弱性信号）。margin 只在同模型、同语料、同 chunker 的配置族内横向比较；跨 embedding 模型不直接比 margin 数值。
+- **三层产物**：`results/*.json` = 机器真值(含 code/corpus/golden/model/config 指纹) ｜ `results/leaderboard.md` = 数字一览 ｜ `journal.md` = 推理与学习。耐用结论上浮 `docs/design.md` §选择。

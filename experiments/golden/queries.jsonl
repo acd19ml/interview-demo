@@ -1,3 +1,7 @@
 {"id": "q1", "query": "春天", "gold_doc": "chun", "gold_chunk_ids": [], "axis": "keyword", "note": "字面重合高：'春'⊂'春天'，关键词与 dense 都应命中"}
 {"id": "q2", "query": "少年闰土", "gold_doc": "guxiang", "gold_chunk_ids": [], "axis": "entity", "note": "闰土是实体，原文出现，奖励精确词命中(sparse)"}
 {"id": "q3", "query": "小孩子", "gold_doc": "guxiang", "gold_chunk_ids": [], "axis": "semantic", "note": "字面零重合的纯语义改写，BM25 全灭，只有 dense 能召回"}
+{"id": "q4", "query": "儿时伙伴", "gold_doc": "guxiang", "gold_chunk_ids": [], "axis": "semantic_stress", "note": "关系型语义；应命中我与少年闰土的回忆"}
+{"id": "q5", "query": "童年伙伴", "gold_doc": "guxiang", "gold_chunk_ids": [], "axis": "semantic_stress", "note": "关系型语义；考察童年回忆和少年闰土"}
+{"id": "q6", "query": "少年形象", "gold_doc": "guxiang", "gold_chunk_ids": [], "axis": "semantic_stress", "note": "主题型语义；应靠少年闰土召回《故乡》"}
+{"id": "q7", "query": "农村少年", "gold_doc": "guxiang", "gold_chunk_ids": [], "axis": "semantic_stress", "note": "主题型语义；考察少年闰土的乡土人物形象"}

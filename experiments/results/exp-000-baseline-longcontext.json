@@ -1,0 +1,128 @@
+{
+  "exp_id": "exp-000-baseline-longcontext",
+  "timestamp": "2026-06-09T15:21:28",
+  "provenance": {
+    "code_sha": "4de3d78",
+    "code_dirty": true,
+    "corpus_hash": "4060baa1a7d5",
+    "golden_hash": "aaa8e13802a2",
+    "model": "(n/a)",
+    "reranker_model": null,
+    "reranker_candidate_k": null,
+    "config_id": "exp-000-baseline-longcontext",
+    "config_hash": "16efb094357c"
+  },
+  "metrics": {
+    "recall@1": 1.0,
+    "recall@3": 1.0,
+    "mrr": 1.0,
+    "min_margin": null
+  },
+  "per_query": [
+    {
+      "id": "q1",
+      "query": "春天",
+      "gold_doc": "chun",
+      "axis": "keyword",
+      "rank": 1,
+      "margin": null,
+      "topk": [
+        {
+          "chunk_id": "chun:oracle",
+          "doc_id": "chun",
+          "score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "query": "少年闰土",
+      "gold_doc": "guxiang",
+      "axis": "entity",
+      "rank": 1,
+      "margin": null,
+      "topk": [
+        {
+          "chunk_id": "guxiang:oracle",
+          "doc_id": "guxiang",
+          "score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "query": "小孩子",
+      "gold_doc": "guxiang",
+      "axis": "semantic",
+      "rank": 1,
+      "margin": null,
+      "topk": [
+        {
+          "chunk_id": "guxiang:oracle",
+          "doc_id": "guxiang",
+          "score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "query": "儿时伙伴",
+      "gold_doc": "guxiang",
+      "axis": "semantic_stress",
+      "rank": 1,
+      "margin": null,
+      "topk": [
+        {
+          "chunk_id": "guxiang:oracle",
+          "doc_id": "guxiang",
+          "score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "query": "童年伙伴",
+      "gold_doc": "guxiang",
+      "axis": "semantic_stress",
+      "rank": 1,
+      "margin": null,
+      "topk": [
+        {
+          "chunk_id": "guxiang:oracle",
+          "doc_id": "guxiang",
+          "score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "query": "少年形象",
+      "gold_doc": "guxiang",
+      "axis": "semantic_stress",
+      "rank": 1,
+      "margin": null,
+      "topk": [
+        {
+          "chunk_id": "guxiang:oracle",
+          "doc_id": "guxiang",
+          "score": 1.0
+        }
+      ]
+    },
+    {
+      "id": "q7",
+      "query": "农村少年",
+      "gold_doc": "guxiang",
+      "axis": "semantic_stress",
+      "rank": 1,
+      "margin": null,
+      "topk": [
+        {
+          "chunk_id": "guxiang:oracle",
+          "doc_id": "guxiang",
+          "score": 1.0
+        }
+      ]
+    }
+  ]
+}

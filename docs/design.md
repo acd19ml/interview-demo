@@ -81,6 +81,29 @@ Chunker / Embedder / Retriever / Reranker / QueryTransform 各自一个接口。
 - **不选 API**：引入 key / 网络 / 成本依赖，损害 demo 可复现性。
 - **不一上来用最大模型**：先 small 起步，让评测决定是否值得为更大模型付代价。
 
+### 选择四：评测判分用文档级；margin 只作同配置族内的脆弱性信号
+
+- **岔路**：要让评测有判别力，直觉是标注"哪个 chunk 才算对"（chunk 级 gold）。
+- **不选 chunk 级**：哪一段算对没有客观标准，且需大量人工——成本高、主观、不可持续。
+- **选文档级**：判分只问"top 结果是否来自 gold_doc"（客观，题目已给：小孩子→故乡）。
+- **margin 的位置**：margin＝最佳 gold 分 − 最佳非 gold 分，用来发现"Recall 已满但排序很脆"的情况；它只在同模型、同语料、同 chunker 等控制变量一致时可横向比较。
+- **不把 margin 当全局目标**：不同 embedding 模型的 cosine 分数尺度未必可比，所以不能用一个模型的 margin 门槛去验收另一个模型。margin 指向风险，不替代 Recall/MRR 与更覆盖的语义评测集。
+
+### 选择五：query 侧变换默认不做；要做必须"路由 + 接地 + 评测门控"
+
+- **背景**：exp-002 给 query 加统一指令前缀，q3 反从 rank1 掉到 rank3——一次无条件、无业务接地的 query 变换，把 query 推离了文档语言，margin 下降正是这件事的度量。
+- **决策**：query 侧改写 / 前缀 / 扩展默认**不启用**。若将来要用，必须同时满足：① **路由**（只对需要的 query 改，简单或已命中的不动）；② **接地**（往语料 / 业务语言靠，而非通用语言）；③ **评测门控**（margin/recall 对照证明有益才留）；④ **禁止对 gold query 手调**（= 数据泄漏）。
+- **不选** 无条件改写 / HyDE / LLM 改写：要么把 query 拉离文档语言，要么把 LLM 引入本应 LLM-free、确定性的检索与评测路径。
+- **本轮影响**：exp-002 作为负结果留档；不再把通用前缀当作默认增强路径。
+
+### 选择六：先扩语义评测集，再加增强层
+
+- **背景**：exp-001 在 3 条 golden query 上已经 Recall@1=1.0，但 q3 margin 很小；这说明"有脆弱信号"，不等于"必须立刻换模型或加组件"。
+- **不直接换大模型**：只有一条语义 query 时，换 embedding 很容易变成围绕单题调参；且跨模型 margin 不可直接比较，无法支撑"明显更好"的验收。
+- **选先扩 semantic stress set**：先增加自然的零字面重合查询（例如小孩/儿童/孩童/儿时伙伴/童年伙伴/少年形象/农村少年），只改评测集、不改检索。若 dense-only 仍稳，则停止；若失败，再根据失败形态选最小杠杆。
+- **增强层排序**：文档增强 / rerank / query expansion / 更大 embedding 都是菜单，不是计划；只有 stress set 暴露具体失败后才打开对应项。
+- **本轮结果**：审计后的 semantic stress set 显示 dense-only 排序不稳；cross-encoder rerank top10 是当前 P2 默认候选。query instruction 继续回滚，文档增强 / query expansion / 更大 embedding 不启用。
+
 ## 5. 演进（Evolution）
 
 怎么从骨架长成成品——一条"假设 → 实验 → 决策"的链，而不是各模块憋大招。
@@ -89,9 +112,11 @@ Chunker / Embedder / Retriever / Reranker / QueryTransform 各自一个接口。
    - 为什么骨架先于优化：先保证端到端可跑，避免在局部最优上反复堆叠。
 2. **诊断驱动拉杆**：跑 golden set，看哪条 fail，沿一条从上游到下游的定位链——答案在不在库 → chunk 切碎没 → query 和文档有没有语义鸿沟 → embedding 适不适配 → 是不是召回了但排在 TopK 外。**只拉定位到的那一段杠杆**，重跑，记一行 leaderboard + 一句决策。
    - 为什么只拉一个杠杆：可归因（知道是哪个改动起的作用）+ 防过度工程。
-3. **停止规则**：golden set 全绿即停，不再为"还能更好"继续堆组件。
+3. **评测覆盖优先**：若 golden set 已全绿但暴露脆弱信号，先补同类评测样例，而不是马上堆组件。
+   - 为什么先扩评测：否则优化会围着单题 margin 打转，结论不可泛化。
+4. **停止规则**：扩展后的 golden set 全绿即停，不再为"还能更好"继续堆组件。
    - 这条停止规则，就是把"不为没出现的问题过度设计"落进流程。
-4. 每一步 = 一个 PR + 一行 leaderboard + 一句决策 → git 历史本身成为决策叙事。
+5. 每一步 = 一个 PR + 一行 leaderboard + 一句决策 → git 历史本身成为决策叙事。
 
 消融矩阵（见 `experiments/README.md`）是这条链的"菜单"，不是计划：诊断决定点哪几道，没被指向的不跑、不写文档。
 
@@ -102,6 +127,5 @@ Chunker / Embedder / Retriever / Reranker / QueryTransform 各自一个接口。
 | 开放项 | 现在不做的原因 | 复审触发 |
 |---|---|---|
 | 查询路由（一次检索够 vs 多跳）| 题目是单次 tool call，模型自判易把简单问题复杂化 | 出现明确多跳问题形态 |
-| chunk 级 gold 标注 | chunk id 依赖切分策略，得先有 chunker | v0.1 chunker 落地后回填 |
 | 在线 A/B | 需要真实流量；离线 A/B 已能给出严谨结论 | 有线上流量后 |
 | 失败分布自动监控 | 上线后才有分布可言 | 系统上线 |

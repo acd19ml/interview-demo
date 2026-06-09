@@ -1,0 +1,268 @@
+{
+  "exp_id": "exp-002-query-instruction",
+  "timestamp": "2026-06-09T15:21:45",
+  "provenance": {
+    "code_sha": "4de3d78",
+    "code_dirty": true,
+    "corpus_hash": "4060baa1a7d5",
+    "golden_hash": "aaa8e13802a2",
+    "model": "BAAI/bge-small-zh-v1.5",
+    "reranker_model": null,
+    "reranker_candidate_k": null,
+    "config_id": "exp-002-query-instruction",
+    "config_hash": "f6dfae554d47"
+  },
+  "metrics": {
+    "recall@1": 0.2857142857142857,
+    "recall@3": 1.0,
+    "mrr": 0.5714285714285714,
+    "min_margin": -0.02055990695953369
+  },
+  "per_query": [
+    {
+      "id": "q1",
+      "query": "春天",
+      "gold_doc": "chun",
+      "axis": "keyword",
+      "rank": 1,
+      "margin": 0.2330024242401123,
+      "topk": [
+        {
+          "chunk_id": "chun:1",
+          "doc_id": "chun",
+          "score": 0.6087
+        },
+        {
+          "chunk_id": "chun:0",
+          "doc_id": "chun",
+          "score": 0.5326
+        },
+        {
+          "chunk_id": "guxiang:2",
+          "doc_id": "guxiang",
+          "score": 0.3757
+        },
+        {
+          "chunk_id": "guxiang:1",
+          "doc_id": "guxiang",
+          "score": 0.3607
+        },
+        {
+          "chunk_id": "guxiang:9",
+          "doc_id": "guxiang",
+          "score": 0.3496
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "query": "少年闰土",
+      "gold_doc": "guxiang",
+      "axis": "entity",
+      "rank": 1,
+      "margin": 0.1931268572807312,
+      "topk": [
+        {
+          "chunk_id": "guxiang:2",
+          "doc_id": "guxiang",
+          "score": 0.6029
+        },
+        {
+          "chunk_id": "guxiang:6",
+          "doc_id": "guxiang",
+          "score": 0.5515
+        },
+        {
+          "chunk_id": "guxiang:1",
+          "doc_id": "guxiang",
+          "score": 0.5394
+        },
+        {
+          "chunk_id": "guxiang:8",
+          "doc_id": "guxiang",
+          "score": 0.5196
+        },
+        {
+          "chunk_id": "guxiang:5",
+          "doc_id": "guxiang",
+          "score": 0.5095
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "query": "小孩子",
+      "gold_doc": "guxiang",
+      "axis": "semantic",
+      "rank": 3,
+      "margin": -0.011281967163085938,
+      "topk": [
+        {
+          "chunk_id": "chun:1",
+          "doc_id": "chun",
+          "score": 0.3873
+        },
+        {
+          "chunk_id": "yao:5",
+          "doc_id": "yao",
+          "score": 0.3843
+        },
+        {
+          "chunk_id": "guxiang:4",
+          "doc_id": "guxiang",
+          "score": 0.3761
+        },
+        {
+          "chunk_id": "guxiang:7",
+          "doc_id": "guxiang",
+          "score": 0.3758
+        },
+        {
+          "chunk_id": "fengbo:0",
+          "doc_id": "fengbo",
+          "score": 0.3738
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "query": "儿时伙伴",
+      "gold_doc": "guxiang",
+      "axis": "semantic_stress",
+      "rank": 2,
+      "margin": -0.002307385206222534,
+      "topk": [
+        {
+          "chunk_id": "yao:5",
+          "doc_id": "yao",
+          "score": 0.3687
+        },
+        {
+          "chunk_id": "guxiang:1",
+          "doc_id": "guxiang",
+          "score": 0.3664
+        },
+        {
+          "chunk_id": "guxiang:4",
+          "doc_id": "guxiang",
+          "score": 0.3632
+        },
+        {
+          "chunk_id": "chun:1",
+          "doc_id": "chun",
+          "score": 0.358
+        },
+        {
+          "chunk_id": "guxiang:3",
+          "doc_id": "guxiang",
+          "score": 0.3386
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "query": "童年伙伴",
+      "gold_doc": "guxiang",
+      "axis": "semantic_stress",
+      "rank": 3,
+      "margin": -0.020065873861312866,
+      "topk": [
+        {
+          "chunk_id": "yao:5",
+          "doc_id": "yao",
+          "score": 0.3699
+        },
+        {
+          "chunk_id": "chun:1",
+          "doc_id": "chun",
+          "score": 0.3644
+        },
+        {
+          "chunk_id": "guxiang:4",
+          "doc_id": "guxiang",
+          "score": 0.3499
+        },
+        {
+          "chunk_id": "guxiang:3",
+          "doc_id": "guxiang",
+          "score": 0.3476
+        },
+        {
+          "chunk_id": "guxiang:1",
+          "doc_id": "guxiang",
+          "score": 0.3326
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "query": "少年形象",
+      "gold_doc": "guxiang",
+      "axis": "semantic_stress",
+      "rank": 2,
+      "margin": -0.005518913269042969,
+      "topk": [
+        {
+          "chunk_id": "yao:5",
+          "doc_id": "yao",
+          "score": 0.4036
+        },
+        {
+          "chunk_id": "guxiang:4",
+          "doc_id": "guxiang",
+          "score": 0.398
+        },
+        {
+          "chunk_id": "chun:1",
+          "doc_id": "chun",
+          "score": 0.3812
+        },
+        {
+          "chunk_id": "guxiang:1",
+          "doc_id": "guxiang",
+          "score": 0.3752
+        },
+        {
+          "chunk_id": "yao:6",
+          "doc_id": "yao",
+          "score": 0.3729
+        }
+      ]
+    },
+    {
+      "id": "q7",
+      "query": "农村少年",
+      "gold_doc": "guxiang",
+      "axis": "semantic_stress",
+      "rank": 3,
+      "margin": -0.02055990695953369,
+      "topk": [
+        {
+          "chunk_id": "fengbo:0",
+          "doc_id": "fengbo",
+          "score": 0.4542
+        },
+        {
+          "chunk_id": "chun:1",
+          "doc_id": "chun",
+          "score": 0.4491
+        },
+        {
+          "chunk_id": "guxiang:1",
+          "doc_id": "guxiang",
+          "score": 0.4336
+        },
+        {
+          "chunk_id": "fengbo:1",
+          "doc_id": "fengbo",
+          "score": 0.4129
+        },
+        {
+          "chunk_id": "yao:5",
+          "doc_id": "yao",
+          "score": 0.4052
+        }
+      ]
+    }
+  ]
+}

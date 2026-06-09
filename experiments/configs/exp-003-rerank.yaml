@@ -1,0 +1,24 @@
+id: exp-003-rerank
+description: P2 —— dense top10 召回后用 cross-encoder reranker 重排，验证短语义 query 排序是否变稳
+mode: retrieval
+
+chunker:
+  type: fixed
+  size: 512
+  overlap: 0
+embedder:
+  type: bge
+  model: BAAI/bge-small-zh-v1.5
+retriever:
+  type: dense
+  top_k: 5
+reranker:
+  type: cross_encoder
+  model: BAAI/bge-reranker-base
+  candidate_k: 10
+query_transform: null
+
+notes: >
+  单变量对照 exp-001：只新增 reranker，dense 召回与 chunking 不变。
+  触发条件来自 semantic stress set：多数失败不是完全召回不到，而是 gold_doc 排在 Top2~4。
+  预测：semantic@1 明显高于 exp-001 的 3/8，q1/q2/q3 不退化。

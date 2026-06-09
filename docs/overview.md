@@ -79,8 +79,8 @@ experiments/         # 已建：golden / configs / eval.py / leaderboard
 
 **MCP（给 agent）**
 - `kb_search(query: str, top_k: int = 5)` → `{results: [{doc_id, title, snippet, score}], ...}`
-- 错误契约（结构化返回，让 agent 能自我纠正——只取这条原则，不建 repair harness）：
-  `EMPTY_QUERY` / `KB_EMPTY` / `RETRIEVAL_FAILED` / `TIMEOUT`。
+- 工具描述随 MCP `list_tools` 下发，明确提示 agent 对“查知识库/相关内容/语义检索”类请求直接调用 `kb_search`，不要读取配置或源码自查。
+- 错误契约：MCP 返回 `{ok:false, error:{code, message}}`，HTTP 返回对应状态码 + `{detail:{code, message}}`，让 agent 能自我纠正（只取这条原则，不建 repair harness）。**全量错误码见本节末《错误码契约》表。**
 
 **HTTP（给人）**
 | 方法 | 路径 | 说明 |
@@ -93,6 +93,24 @@ experiments/         # 已建：golden / configs / eval.py / leaderboard
 
 > 边界：生成只在 `/search/stream`；MCP `kb_search` 与 `/search` 只做检索、返回结构化结果——调用方 agent 自己生成，工具内不重复生成（design.md §3.3）。
 
+**错误码契约（全量，单一来源）**
+
+| code | 触发 | 接口 | HTTP 状态 | 类型 |
+|---|---|---|---|---|
+| `EMPTY_QUERY` | query 去空白后为空 | MCP · HTTP `/search` | 400 | error |
+| `KB_NOT_FOUND` | 库内无文档 | MCP · HTTP `/search` | 404 | error |
+| `EMBEDDING_FAILED` | 嵌入模型调用异常 | MCP · HTTP `/search`·入库 | 503 | error |
+| `VECTOR_SEARCH_FAILED` | 向量检索/重排异常 | MCP · HTTP `/search` | 503 | error |
+| `TOOL_TIMEOUT` | MCP 调用 > 20s | MCP | — | error |
+| `RETRIEVAL_FAILED` | MCP 未分类兜底异常 | MCP | — | error |
+| `NO_RELEVANT_RESULT` | top 分 < `MIN_RELEVANCE`(0.2) | MCP · HTTP `/search` | 200 | soft（`ok:true`，空 results）|
+| `EMPTY_TITLE` | 入库标题为空 | HTTP · 前端 | 400 | error |
+| `EMPTY_DOCUMENT` | 入库内容为空 | HTTP · 前端 | 400 | error |
+| `DOCUMENT_NOT_FOUND` | 操作不存在的 doc id | HTTP | 404 | error |
+| `BAD_PAGINATION` | page/size < 1 | HTTP `/documents` | 400 | error |
+| `UNSUPPORTED_FILE_TYPE` | 非 .txt 文件 | 前端读取层 | — | error |
+| `DUPLICATE_DOC_ID` | 语料 stem 撞名（seed 期）| core 启动期 | — | fail-loud |
+
 **数据模型**
 - `Document(id, title, source_type, content, created_at, updated_at)`
 - `Chunk(id, doc_id, ord, text)` + 向量存 VectorStore
@@ -102,11 +120,11 @@ experiments/         # 已建：golden / configs / eval.py / leaderboard
 | 期 | 版本 | 时长 | 做什么 | **本期不做** | 完成定义（挂在评测/可验证点）|
 |---|---|---|---|---|---|
 | P0 设计+脚手架 | – | 1.5h | design.md、experiments 脚手架、本概要 | 任何功能代码 | ✅ 已基本完成 |
-| P1 走骨架 | v0.1 | 1.0h | core 纯库(SQLite+dense 暴力+bge-small+fixed chunk)、入库真实《春》《故乡》+≥3 distractor、填 `eval.py`、MCP `kb_search` 可调用 | hybrid / rerank / rewrite / 流式 / HTTP CRUD / 错误打磨 | exp-001 与 exp-000(oracle) 跑出指标，leaderboard 第一行；kb_search 返回结构化结果 |
-| P2 检索质量迭代 | v0.5 | 2.0h | 诊断驱动拉杆：chunk 策略 →（按需）hybrid →（按需）rerank，每条一行 leaderboard+一句决策 | 给没 fail 的 query 加组件；诊断没指向的杠杆 | golden 全绿（q1/q2/q3 命中，Recall@3=1.0）；≥2 行有信息量的消融对比 |
-| P3 接口层 | v1.0-rc | 1.5h | HTTP CRUD+分页+上传、`/search`、SSE 流式(传输层)+可选 LLM 生成、MCP 错误契约(4 类) | auth/多用户、前端页面(→P5)、部署 | curl 走通 CRUD+分页+上传；SSE 逐字；(有 key)生成式答案；MCP 4 类错误结构化返回 |
-| P4 收尾交付 | v1.0 | 1.0h | README(运行说明 + 实现思路链到 design.md)、打包(命名文件夹+简历)、tag | 新功能 | 按命名规范打包可提交；`git tag v1.0` |
-| P5 前端(stretch) | – | 余量 | 最小 HTML 页演示流式（用你的前端 skill）| 核心功能 | 低优先级，有余量再做 |
+| P1 走骨架 | v0.1 | 1.0h | core 纯库(SQLite+dense 暴力+bge-small+fixed chunk)、入库真实《春》《故乡》+≥3 distractor、填 `eval.py`、MCP `kb_search` 可调用 | hybrid / rerank / rewrite / 流式 / HTTP CRUD / 错误打磨 | ✅ 已完成；实验结果见 `experiments/results/leaderboard.md`；`kb_search` 返回结构化结果 |
+| P2 检索质量迭代 | v0.5 | 2.0h | 诊断驱动拉杆：chunk 策略 →（按需）hybrid →（按需）rerank，每条一行 leaderboard+一句决策 | 给没 fail 的 query 加组件；诊断没指向的杠杆 | ✅ 已完成；`exp-003-rerank` 为当前 P2 默认候选，结果见 `experiments/results/leaderboard.md` |
+| P3 接口层 | v1.0-rc | 1.5h | HTTP CRUD+分页+上传、`/search`、SSE 流式(传输层)+可选 LLM 生成、MCP 错误契约(4 类) | auth/多用户、前端页面(→P5)、部署 | ✅ 已完成；HTTP direct-text 入库/CRUD/分页/search/SSE smoke test 通过；MCP 结构化错误契约与工具描述已补，协议 smoke 通过 |
+| P4 收尾交付 | v1.0 | 1.0h | README(运行说明 + 实现思路链到 design.md)、打包(命名文件夹+简历)、tag | 新功能 | 进行中：README 运行说明已补；提交包命名信息与简历到位后打包并 `git tag v1.0` |
+| P5 前端(stretch) | – | 余量 | 最小 HTML 页演示流式（用你的前端 skill）| 核心功能 | ✅ 已完成；`GET /` 返回 Acme HTML 最小前端，覆盖文档 CRUD/分页/直接文本入库/txt 读取/search/SSE |
 
 ## 6. 全局边界与待确认
 
@@ -121,6 +139,8 @@ experiments/         # 已建：golden / configs / eval.py / leaderboard
 **已定（本轮）**
 - SSE 是传输层、不等于 LLM。生成作为**可选薄层**：有 OpenAI 兼容 key 则开生成式答案，无 key 降级吐 snippet。
 - 前端：先纯 curl/脚本；最小页挪到 P5 低优先级（用你的前端 skill）。
+- 当前 HTTP/MCP 默认检索配置：`experiments/configs/exp-003-rerank.yaml`。
 
 **待你确认**
-1. **简历**：打包需要，你提供文件即可。
+1. **提交包信息与简历**：打包需要姓名、学校和最新简历文件。
+2. **《春》全文**：当前仅放短摘录与检索样本文本；若你确认交付地版权允许或直接提供全文，再替换为全文。

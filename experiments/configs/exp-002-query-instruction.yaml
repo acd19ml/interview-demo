@@ -1,0 +1,22 @@
+id: exp-002-query-instruction
+description: H1 —— query 加 bge 指令前缀（passage 不加），验证非对称检索能否撑大 q3 margin
+mode: retrieval
+
+chunker:
+  type: fixed
+  size: 512
+  overlap: 0
+embedder:
+  type: bge
+  model: BAAI/bge-small-zh-v1.5
+  query_instruction: "为这个句子生成表示以用于检索相关文章："   # ← 相对 exp-001 唯一改动
+retriever:
+  type: dense
+  top_k: 5
+reranker: null
+query_transform: null
+
+notes: >
+  单变量对照 exp-001：仅新增 query_instruction（passage 不变）。
+  预测：q3「小孩子」margin 明显↑、q1/q2 不退化。
+  该实验已证伪；query_instruction 不启用，后续先扩 semantic stress set。

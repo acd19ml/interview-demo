@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>interview-demo knowledge base</title>
+<style>
+  :root {
+    --ivory: #FAF9F5;
+    --slate: #141413;
+    --clay: #D97757;
+    --clay-d: #B85C3E;
+    --oat: #E3DACC;
+    --olive: #788C5D;
+    --rust: #B04A3F;
+    --white: #FFFFFF;
+    --gray-100: #F0EEE6;
+    --gray-200: #E6E3DA;
+    --gray-300: #D1CFC5;
+    --gray-500: #87867F;
+    --gray-700: #3D3D3A;
+    --success: #788C5D;
+    --warning: #C78E3F;
+    --danger:  #B04A4A;
+    --info:    #5C7CA3;
+    --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+    --sans:  system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    --radius-xs: 4px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-panel: 12px;
+    --radius-row: 8px;
+    --radius-pill: 999px;
+    --border: 1.5px solid var(--gray-300);
+    --border-light: 1px solid var(--gray-100);
+    --shadow-sm: 0 1px 2px rgba(20, 20, 19, 0.06);
+    --shadow-md: 0 4px 10px rgba(20, 20, 19, 0.08);
+    --shadow-lg: 0 12px 28px rgba(20, 20, 19, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 56px 24px 96px;
+    background: var(--ivory);
+    color: var(--slate);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page { max-width: 1120px; margin: 0 auto; }
+
+  header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 18px;
+    align-items: end;
+    margin-bottom: 34px;
+  }
+
+  .eyebrow, .label, .meta, footer {
+    font-family: var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .eyebrow {
+    color: var(--gray-500);
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  h1 { font-size: 40px; line-height: 1.1; margin: 0 0 8px; }
+  h2 { font-size: 24px; margin: 0 0 6px; }
+  h3 { font-size: 18px; margin: 0 0 6px; }
+
+  .sub {
+    color: var(--gray-500);
+    margin: 0;
+    max-width: 680px;
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 11px;
+    border: var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--white);
+    color: var(--gray-700);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  section { margin-bottom: 42px; }
+
+  .section-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 10px;
+  }
+
+  hr.rule {
+    border: none;
+    border-top: 1px solid var(--gray-300);
+    margin: 0 0 18px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    gap: 20px;
+    align-items: start;
+  }
+
+  .card {
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius-panel);
+    padding: 20px 22px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--slate);
+  }
+
+  .toolbar {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .input, textarea {
+    width: 100%;
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius-row);
+    color: var(--slate);
+    font-family: var(--sans);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+  }
+
+  .input {
+    height: 38px;
+    padding: 0 12px;
+  }
+
+  textarea {
+    min-height: 148px;
+    resize: vertical;
+    padding: 11px 12px;
+  }
+
+  .input::placeholder, textarea::placeholder { color: var(--gray-500); }
+
+  .input:focus, textarea:focus {
+    border-color: var(--clay);
+    box-shadow: 0 0 0 3px rgba(217,119,87,0.15);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    padding: 0 16px;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-row);
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+    white-space: nowrap;
+  }
+
+  .btn-primary { background: var(--clay); color: var(--white); }
+  .btn-primary:hover { background: var(--clay-d); }
+  .btn-secondary { background: var(--white); color: var(--slate); border-color: var(--gray-300); }
+  .btn-secondary:hover { background: var(--gray-100); }
+  .btn-ghost { background: transparent; color: var(--gray-700); }
+  .btn-ghost:hover { background: var(--gray-100); }
+
+  .btn:disabled {
+    cursor: not-allowed;
+    background: var(--gray-100);
+    color: var(--gray-500);
+    border-color: var(--gray-300);
+  }
+
+  .quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .pager {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gray-700);
+    background: var(--gray-100);
+    border: var(--border);
+    border-radius: var(--radius-pill);
+    padding: 6px 11px;
+    cursor: pointer;
+  }
+
+  .results {
+    display: grid;
+    gap: 12px;
+  }
+
+  .hit {
+    border: var(--border);
+    border-radius: var(--radius-row);
+    background: var(--ivory);
+    padding: 14px 15px;
+  }
+
+  .hit-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .title {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .score {
+    color: var(--olive);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .snippet {
+    color: var(--gray-700);
+    margin: 0;
+    word-break: break-word;
+  }
+
+  .stream {
+    min-height: 180px;
+    white-space: pre-wrap;
+    color: var(--gray-700);
+  }
+
+  .doc-list {
+    display: grid;
+    gap: 10px;
+    max-height: 390px;
+    overflow: auto;
+    padding-right: 2px;
+  }
+
+  .doc-item {
+    width: 100%;
+    text-align: left;
+    border: var(--border);
+    border-radius: var(--radius-row);
+    background: var(--ivory);
+    padding: 12px 13px;
+    cursor: pointer;
+    transition: border-color 120ms ease, background 120ms ease;
+  }
+
+  .doc-item:hover, .doc-item.active {
+    border-color: var(--clay);
+    background: var(--white);
+  }
+
+  .doc-title {
+    display: block;
+    color: var(--slate);
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .doc-id, .meta {
+    color: var(--gray-500);
+    font-size: 11px;
+  }
+
+  .form-grid {
+    display: grid;
+    gap: 10px;
+  }
+
+  .file-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+
+  input[type="file"] {
+    width: 100%;
+    border: var(--border);
+    border-radius: var(--radius-row);
+    background: var(--white);
+    padding: 8px 10px;
+    color: var(--gray-700);
+    font-family: var(--sans);
+    font-size: 13px;
+  }
+
+  .label {
+    display: block;
+    color: var(--gray-500);
+    font-size: 11px;
+    margin: 0 0 5px;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .empty {
+    color: var(--gray-500);
+    border: var(--border);
+    border-radius: var(--radius-row);
+    padding: 18px;
+    background: var(--ivory);
+  }
+
+  footer {
+    color: var(--gray-500);
+    font-size: 11px;
+    border-top: 1px solid var(--gray-300);
+    padding-top: 18px;
+  }
+
+  @media (max-width: 880px) {
+    header, .grid { grid-template-columns: 1fr; }
+    .toolbar { grid-template-columns: 1fr; }
+    .section-head { align-items: start; flex-direction: column; }
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 36px 16px 72px; }
+    h1 { font-size: 32px; }
+    .file-row { grid-template-columns: 1fr; }
+    .card { padding: 18px; }
+  }
+
+  .toast-wrap {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: min(360px, calc(100vw - 40px));
+  }
+
+  .toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--white);
+    border: var(--border);
+    border-left: 4px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--slate);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { border-left-color: var(--success); }
+  .toast.error   { border-left-color: var(--danger); }
+  .toast.info    { border-left-color: var(--info); }
+
+  .toast .ico {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .toast.success .ico { background: var(--success); }
+  .toast.error .ico { background: var(--danger); }
+  .toast.info .ico { background: var(--info); }
+
+  @media (max-width: 640px) {
+    .toast-wrap { left: 16px; right: 16px; bottom: 16px; max-width: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <div class="eyebrow">RAG Knowledge Base</div>
+        <h1>interview-demo</h1>
+        <p class="sub">检索、流式返回和文档入库共用同一套本地 HTTP API。</p>
+      </div>
+      <div class="status" id="status">Initializing</div>
+    </header>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>Search</h2>
+          <div class="meta">exp-003-rerank · top k</div>
+        </div>
+      </div>
+      <hr class="rule">
+      <div class="card">
+        <div class="quick">
+          <button class="chip" data-query="春天">春天</button>
+          <button class="chip" data-query="少年闰土">少年闰土</button>
+          <button class="chip" data-query="小孩子">小孩子</button>
+          <button class="chip" data-query="儿时伙伴">儿时伙伴</button>
+        </div>
+        <div class="toolbar">
+          <input class="input" id="query" value="小孩子" aria-label="query">
+          <button class="btn btn-secondary" id="streamBtn">流式</button>
+          <button class="btn btn-primary" id="searchBtn">检索</button>
+        </div>
+        <div class="grid">
+          <div>
+            <span class="label">Results</span>
+            <div class="results" id="results"></div>
+          </div>
+          <div>
+            <span class="label">Stream</span>
+            <div class="hit stream" id="stream"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>Documents</h2>
+          <div class="meta" id="docMeta">page 1</div>
+        </div>
+        <div class="pager">
+          <button class="btn btn-secondary" id="prevBtn">上一页</button>
+          <button class="btn btn-secondary" id="nextBtn">下一页</button>
+          <button class="btn btn-secondary" id="refreshBtn">刷新</button>
+        </div>
+      </div>
+      <hr class="rule">
+      <div class="grid">
+        <div class="card">
+          <span class="label">Library</span>
+          <div class="doc-list" id="docs"></div>
+        </div>
+        <div class="card">
+          <div class="form-grid">
+            <label>
+              <span class="label">Title</span>
+              <input class="input" id="title" placeholder="文档标题">
+            </label>
+            <label>
+              <span class="label">Content</span>
+              <textarea id="content" placeholder="直接输入文本，或读取 txt 文件。"></textarea>
+            </label>
+            <div class="file-row">
+              <input type="file" id="file" accept=".txt,text/plain" aria-label="txt file">
+              <button class="btn btn-secondary" id="readFileBtn">读取 txt</button>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-ghost" id="clearBtn">新增文档</button>
+              <button class="btn btn-secondary" id="deleteBtn">删除</button>
+              <button class="btn btn-primary" id="saveBtn">新增</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>interview-demo · FastAPI HTTP frontend · 2026-06-09</footer>
+  </div>
+
+  <div class="toast-wrap" id="toasts" aria-live="polite"></div>
+
+<script>
+  const state = { docs: [], activeDocId: null, stream: null, page: 1, size: 5, total: 0 };
+  const el = (id) => document.getElementById(id);
+
+  function setStatus(text) {
+    el("status").textContent = text;
+  }
+
+  const ERR_MSG = {
+    EMPTY_QUERY: "请输入查询内容",
+    EMPTY_TITLE: "标题不能为空",
+    EMPTY_DOCUMENT: "内容不能为空",
+    UNSUPPORTED_FILE_TYPE: "仅支持 .txt 文件",
+    NO_FILE: "请先选择文件",
+    NO_DOCUMENT: "请先选择一篇文档",
+    DOCUMENT_NOT_FOUND: "文档不存在",
+    KB_NOT_FOUND: "知识库为空",
+    EMBEDDING_FAILED: "向量化失败，请重试",
+    VECTOR_SEARCH_FAILED: "检索失败，请重试",
+    TOOL_TIMEOUT: "查询超时，请重试",
+  };
+  const errMsg = (code) => ERR_MSG[code] || code || "出错了";
+
+  const TOAST_ICON = { success: "✓", error: "✕", info: "i" };
+  function toast(message, type = "info") {
+    const node = document.createElement("div");
+    node.className = `toast ${type}`;
+    node.innerHTML = `<span class="ico">${TOAST_ICON[type] || "i"}</span><span>${escapeHtml(message)}</span>`;
+    el("toasts").appendChild(node);
+    requestAnimationFrame(() => node.classList.add("show"));
+    setTimeout(() => {
+      node.classList.remove("show");
+      setTimeout(() => node.remove(), 200);
+    }, 3000);
+  }
+
+  function showError(error) {
+    const code = error && error.detail && error.detail.code;
+    setStatus(code || "Error");
+    toast(errMsg(code), "error");
+  }
+
+  async function request(path, options = {}) {
+    const response = await fetch(path, options);
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw data;
+    }
+    return data;
+  }
+
+  function renderResults(items) {
+    const box = el("results");
+    if (!items.length) {
+      box.innerHTML = '<div class="empty">未找到相关内容</div>';
+      return;
+    }
+    box.innerHTML = items.map((hit) => `
+      <article class="hit">
+        <div class="hit-top">
+          <span class="title">${escapeHtml(hit.title)}</span>
+          <span class="score">${Number(hit.score).toFixed(4)}</span>
+        </div>
+        <div class="doc-id" style="margin-bottom:8px">${escapeHtml(hit.doc_id)}</div>
+        <p class="snippet">${escapeHtml(hit.snippet)}</p>
+      </article>
+    `).join("");
+  }
+
+  async function search() {
+    const query = el("query").value.trim();
+    if (!query) {
+      setStatus("EMPTY_QUERY");
+      toast(errMsg("EMPTY_QUERY"), "error");
+      return;
+    }
+    setStatus("Searching");
+    try {
+      const data = await request("/search", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ query, top_k: 3 })
+      });
+      renderResults(data.results);
+      setStatus("Ready");
+      toast(
+        data.results.length ? `找到 ${data.results.length} 条相关结果` : "未找到相关内容",
+        data.results.length ? "success" : "info"
+      );
+    } catch (error) {
+      showError(error);
+    }
+  }
+
+  function streamSearch() {
+    const query = el("query").value.trim();
+    if (!query) {
+      setStatus("EMPTY_QUERY");
+      toast(errMsg("EMPTY_QUERY"), "error");
+      return;
+    }
+    if (state.stream) {
+      state.stream.close();
+    }
+    el("stream").textContent = "";
+    setStatus("Streaming");
+    let done = false;
+    state.stream = new EventSource(`/search/stream?q=${encodeURIComponent(query)}&top_k=1`);
+    state.stream.onmessage = (event) => {
+      if (event.data === "[DONE]") {
+        done = true;
+        state.stream.close();
+        state.stream = null;
+        setStatus("Ready");
+        toast("流式返回完成", "success");
+        return;
+      }
+      el("stream").textContent += event.data;
+    };
+    state.stream.onerror = () => {
+      if (state.stream) {
+        state.stream.close();
+        state.stream = null;
+      }
+      if (done) return;
+      setStatus("Stream Error");
+      toast("流式连接中断", "error");
+    };
+  }
+
+  async function loadDocs() {
+    setStatus("Loading");
+    try {
+      const data = await request(`/documents?page=${state.page}&size=${state.size}`);
+      state.docs = data.items;
+      state.total = data.total;
+      el("docMeta").textContent = `page ${data.page} · ${data.total} docs`;
+      renderDocs();
+      setStatus("Ready");
+    } catch (error) {
+      showError(error);
+    }
+  }
+
+  function renderDocs() {
+    const box = el("docs");
+    syncFormMode();
+    if (!state.docs.length) {
+      box.innerHTML = '<div class="empty">知识库为空</div>';
+      return;
+    }
+    box.innerHTML = state.docs.map((doc) => `
+      <button class="doc-item ${doc.id === state.activeDocId ? "active" : ""}" data-doc="${escapeAttr(doc.id)}">
+        <span class="doc-title">${escapeHtml(doc.title)}</span>
+        <span class="doc-id">${escapeHtml(doc.id)}</span>
+      </button>
+    `).join("");
+  }
+
+  function selectDoc(id) {
+    const doc = state.docs.find((item) => item.id === id);
+    if (!doc) return;
+    state.activeDocId = doc.id;
+    el("title").value = doc.title;
+    el("content").value = doc.content;
+    renderDocs();
+    toast(`已载入《${doc.title}》到表单`, "info");
+  }
+
+  function syncFormMode() {
+    el("saveBtn").textContent = state.activeDocId ? "更新" : "新增";
+    el("deleteBtn").disabled = !state.activeDocId;
+  }
+
+  async function saveDoc() {
+    const title = el("title").value.trim();
+    const content = el("content").value.trim();
+    if (!title || !content) {
+      const code = !title ? "EMPTY_TITLE" : "EMPTY_DOCUMENT";
+      setStatus(code);
+      toast(errMsg(code), "error");
+      return;
+    }
+    const editing = !!state.activeDocId;
+    setStatus("Saving");
+    try {
+      const path = editing ? `/documents/${encodeURIComponent(state.activeDocId)}` : "/documents";
+      await request(path, {
+        method: editing ? "PUT" : "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ title, content })
+      });
+      clearForm();
+      await loadDocs();
+      toast(`已${editing ? "更新" : "新增"}《${title}》`, "success");
+    } catch (error) {
+      showError(error);
+    }
+  }
+
+  async function deleteDoc() {
+    if (!state.activeDocId) {
+      setStatus("NO_DOCUMENT");
+      toast(errMsg("NO_DOCUMENT"), "error");
+      return;
+    }
+    const removed = el("title").value.trim();
+    setStatus("Deleting");
+    try {
+      await request(`/documents/${encodeURIComponent(state.activeDocId)}`, { method: "DELETE" });
+      clearForm();
+      await loadDocs();
+      toast(removed ? `已删除《${removed}》` : "已删除文档", "success");
+    } catch (error) {
+      showError(error);
+    }
+  }
+
+  function changePage(delta) {
+    const maxPage = Math.max(1, Math.ceil(state.total / state.size));
+    const next = Math.min(maxPage, Math.max(1, state.page + delta));
+    if (next !== state.page) {
+      state.page = next;
+      clearForm();
+      loadDocs();
+      toast(`第 ${next} 页`, "info");
+    }
+  }
+
+  function clearForm() {
+    state.activeDocId = null;
+    el("title").value = "";
+    el("content").value = "";
+    el("file").value = "";
+    renderDocs();
+  }
+
+  async function readTxt() {
+    const file = el("file").files[0];
+    if (!file) {
+      setStatus("NO_FILE");
+      toast(errMsg("NO_FILE"), "error");
+      return;
+    }
+    if (!/\.txt$/i.test(file.name) || (file.type && file.type !== "text/plain")) {
+      setStatus("UNSUPPORTED_FILE_TYPE");
+      toast(errMsg("UNSUPPORTED_FILE_TYPE"), "error");
+      return;
+    }
+    const text = await file.text();
+    el("title").value = el("title").value || file.name.replace(/\.txt$/i, "");
+    el("content").value = text;
+    setStatus("Loaded");
+    toast(`已读取 ${file.name}`, "success");
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function escapeAttr(value) {
+    return escapeHtml(value).replaceAll("`", "&#096;");
+  }
+
+  el("searchBtn").addEventListener("click", search);
+  el("streamBtn").addEventListener("click", streamSearch);
+  el("refreshBtn").addEventListener("click", () => { loadDocs(); toast("已刷新列表", "info"); });
+  el("saveBtn").addEventListener("click", saveDoc);
+  el("deleteBtn").addEventListener("click", deleteDoc);
+  el("clearBtn").addEventListener("click", () => { clearForm(); toast("已切换到新增文档", "info"); });
+  el("prevBtn").addEventListener("click", () => changePage(-1));
+  el("nextBtn").addEventListener("click", () => changePage(1));
+  el("readFileBtn").addEventListener("click", readTxt);
+  el("query").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") search();
+  });
+  document.querySelectorAll("[data-query]").forEach((button) => {
+    button.addEventListener("click", () => {
+      el("query").value = button.dataset.query;
+      search();
+    });
+  });
+  el("docs").addEventListener("click", (event) => {
+    const item = event.target.closest("[data-doc]");
+    if (item) selectDoc(item.dataset.doc);
+  });
+
+  loadDocs();
+  search();
+</script>
+</body>
+</html>
