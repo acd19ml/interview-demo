@@ -1,0 +1,8 @@
+id: exp-000-baseline-longcontext
+description: full-context 全塞 oracle 上界基线（不检索，整库塞入）
+mode: long_context        # retrieval | long_context
+pipeline: null
+notes: >
+  评测上界。检索若在 golden set 上追不平它，说明检索在丢信息。
+  随着 distractor 增多，观察"中部信息更易被忽略"与 token 成本上升。
+  见 docs/design.md 选择一。

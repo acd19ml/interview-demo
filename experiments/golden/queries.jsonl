@@ -1,0 +1,3 @@
+{"id": "q1", "query": "春天", "gold_doc": "chun", "gold_chunk_ids": [], "axis": "keyword", "note": "字面重合高：'春'⊂'春天'，关键词与 dense 都应命中"}
+{"id": "q2", "query": "少年闰土", "gold_doc": "guxiang", "gold_chunk_ids": [], "axis": "entity", "note": "闰土是实体，原文出现，奖励精确词命中(sparse)"}
+{"id": "q3", "query": "小孩子", "gold_doc": "guxiang", "gold_chunk_ids": [], "axis": "semantic", "note": "字面零重合的纯语义改写，BM25 全灭，只有 dense 能召回"}

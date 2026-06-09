@@ -1,0 +1,20 @@
+id: exp-001-dense-only
+description: v0.1 走骨架 —— 纯 dense 检索 + 固定 chunk
+mode: retrieval           # retrieval | long_context
+
+# 以下每个 block = 一个 Strategy 实现的选择（配置即组装 / DI）。
+# 消融时每次只改一个 block，对照 leaderboard 看 delta。
+chunker:
+  type: fixed             # fixed | paragraph | heading
+  size: 512
+  overlap: 0
+embedder:
+  type: bge
+  model: BAAI/bge-small-zh-v1.5   # 消融轴④：可换 base/large-zh、m3e
+retriever:
+  type: dense             # dense | bm25 | hybrid   ← 消融轴③
+  top_k: 5
+reranker: null            # 消融轴⑤：cross-encoder（按需引入）
+query_transform: null     # 消融轴③：query rewrite（按需引入）
+
+notes: 骨架基线。后续按诊断链拉杆，每次只改一项，禁止一把全开。

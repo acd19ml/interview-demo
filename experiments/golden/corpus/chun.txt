@@ -1,0 +1,2 @@
+TODO(v0.1): 替换为朱自清《春》公有领域全文。
+doc_id=chun，对应 queries.jsonl 中 q1(春天) 的 gold_doc。
